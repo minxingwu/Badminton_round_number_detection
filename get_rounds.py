@@ -5,60 +5,7 @@ import numpy as np
 import pandas as pd
 import os 
 
-def get_rounds_1(x_ys):
-    """
-    Parameters: 
-    ignore the 0 vlaue 
-    x_ys(dict): dict contain df for longest clips
-    """
-    frame = 2
-    min_diff = 40
-    max_diff = 300
 
-    for clip_name, x_y in x_ys.items():
-
-        y_values = x_y['Y'].tolist()
-
-        y_not_zero_values = [y for y in y_values if y != 0.0]
-        print(y_not_zero_values)
-        valid_y = []
-
-
-        for index in range(len(y_not_zero_values)-frame-1):
-            diffs = []
-            for i in range(frame):
-                diffs.append(abs(y_not_zero_values[index + i + 1] - y_not_zero_values[index + i]))
-                
-            valid = True
-            for diff in diffs:
-                if (diff > max_diff):
-                    valid = False
-                    break
-
-            if valid == True:
-                valid_y.append(y_not_zero_values[index])
-
-
-        count = 0
-        i = 1
-        n = len(valid_y)
-
-        print(valid_y)
-
-        # Loop through the array to find increasing then decreasing sequences
-        while i < n - 1:
-            # Find the increasing sequence
-            while i < n and valid_y[i] > valid_y[i - 1]:
-                i += 1
-            count += 1
-
-            # Check for a peak (increasing then decreasing)
-            while i < n and valid_y[i] < valid_y[i - 1]:
-                i += 1
-            count += 1
-     
-        print(clip_name)
-        print(count)
 
 
 def get_rounds(x_ys):
@@ -78,6 +25,7 @@ def get_rounds(x_ys):
 
         #print(y_values)
         valid_y = []
+        #print(y_values)
 
 
         for index in range(len(y_values)-frame-1):
@@ -99,6 +47,8 @@ def get_rounds(x_ys):
         i = 1
         n = len(valid_y)
 
+
+
         #print(valid_y)
 
         # Loop through the array to find increasing then decreasing sequences
@@ -114,10 +64,10 @@ def get_rounds(x_ys):
                     i += 1
             else:
                 i += 1
-        print(clip_name)
+        #print(clip_name)
         if count == 0:
             count += 1 
-        print(count)
+        #print(count)
         rounds.append(count)
 
     return rounds
@@ -148,11 +98,13 @@ def get_rounds_of_longest_clips(path, longest_coefficent=0.2, time_file_postfix 
 
     scores = []
     for index,clip in enumerate(longest_clips):
+        clip.append(rounds[index])
         scores.append(clip[3]/rounds[index])
         clip.append(scores[index])
 
+    print(f"{'clip_name': <40} {'round': <10}  {'speed_based_score': <40}")
     for longest_clip in longest_clips:
-        print(longest_clip)
+        print(f"{longest_clip[0]:<40} {longest_clip[-2]:<10} {longest_clip[-1]:.2f}")
     
 
 
